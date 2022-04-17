@@ -20,8 +20,8 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FRotator CurrentRotation = GetOwner()->GetActorRotation();
-	GetOwner()->SetActorRotation(CurrentRotation.Add(0, -90,0));
+	CurrentRotation = GetOwner()->GetActorRotation();
+	TargetRotation = GetOwner()->GetActorRotation().Add(0., TargetYaw, 0.);
 	// ...
 	
 }
@@ -31,7 +31,8 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	CurrentRotation = FMath::Lerp(CurrentRotation, TargetRotation, 0.02);
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentRotation.ToString());
+	GetOwner()->SetActorRotation(CurrentRotation);
 }
 
