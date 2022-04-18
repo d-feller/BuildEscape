@@ -31,7 +31,7 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	CurrentRotation = FMath::Lerp(CurrentRotation, TargetRotation, 0.02);
+	CurrentRotation.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, TargetRotation.Yaw, DeltaTime, 2);
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentRotation.ToString());
 	GetOwner()->SetActorRotation(CurrentRotation);
 }
