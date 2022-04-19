@@ -22,8 +22,11 @@ void UOpenDoor::BeginPlay()
 
 	CurrentRotation = GetOwner()->GetActorRotation();
 	TargetRotation = GetOwner()->GetActorRotation().Add(0., TargetYaw, 0.);
-	// ...
 	
+	if (!PressurePlate)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s has the %s component on it, but no PressurePlate set."), *GetOwner()->GetName(), *GetName());
+	}
 }
 
 
@@ -31,7 +34,11 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	OpenDoor(DeltaTime);
+
+	if (PressurePlate && PressurePlate->IsOverlappingActor(PressurePlateTrigger))
+	{
+		OpenDoor(DeltaTime);
+	}
 }
 
 void UOpenDoor::OpenDoor(float DeltaTime)
