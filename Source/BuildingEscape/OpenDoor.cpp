@@ -3,6 +3,8 @@
 
 #include "OpenDoor.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/PlayerController.h"
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
@@ -20,13 +22,14 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentRotation = GetOwner()->GetActorRotation();
-	TargetRotation = GetOwner()->GetActorRotation().Add(0., TargetYaw, 0.);
-	
 	if (!PressurePlate)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s has the %s component on it, but no PressurePlate set."), *GetOwner()->GetName(), *GetName());
 	}
+
+	CurrentRotation = GetOwner()->GetActorRotation();
+	TargetRotation = GetOwner()->GetActorRotation().Add(0., TargetYaw, 0.);
+	PressurePlateTrigger = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 
