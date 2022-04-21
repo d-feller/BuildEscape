@@ -25,6 +25,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void OpenDoor(float DeltaTime);
+	void CloseDoor(float DeltaTime);
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -36,6 +37,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	AActor* PressurePlateTrigger;
 
+	FRotator InitialRotation;
 	FRotator CurrentRotation;
 	FRotator TargetRotation;
 };
