@@ -40,4 +40,7 @@ private:
 	FRotator InitialRotation;
 	FRotator CurrentRotation;
 	FRotator TargetRotation;
+
+	float DoorCloseDelay = 0.5f;
+	float DoorLastOpened = 0.f;
 };
