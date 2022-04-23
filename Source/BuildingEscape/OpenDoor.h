@@ -41,6 +41,7 @@ private:
 	FRotator CurrentRotation;
 	FRotator TargetRotation;
 
+	UPROPERTY(EditAnywhere)
 	float DoorCloseDelay = 0.5f;
 	float DoorLastOpened = 0.f;
 };
