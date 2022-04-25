@@ -15,6 +15,7 @@ class BUILDINGESCAPE_API UGrabber : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UGrabber();
+	float Reach = 100.f;
 
 protected:
 	// Called when the game starts
