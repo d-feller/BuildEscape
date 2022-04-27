@@ -52,14 +52,12 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 void UOpenDoor::OpenDoor(float DeltaTime)
 {
 	CurrentRotation.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, TargetRotation.Yaw, DeltaTime, 1);
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentRotation.ToString());
 	GetOwner()->SetActorRotation(CurrentRotation);
 }
 
 void UOpenDoor::CloseDoor(float DeltaTime)
 {
 	CurrentRotation.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, InitialRotation.Yaw, DeltaTime, 5);
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *CurrentRotation.ToString());
 	GetOwner()->SetActorRotation(CurrentRotation);
 }
 

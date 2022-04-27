@@ -15,7 +15,6 @@ class BUILDINGESCAPE_API UGrabber : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UGrabber();
-	float Reach = 100.f;
 
 protected:
 	// Called when the game starts
@@ -24,6 +23,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+private:
+	float Reach = 100.f;
 
 		
 };
