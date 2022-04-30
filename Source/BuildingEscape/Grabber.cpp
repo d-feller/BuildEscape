@@ -33,10 +33,10 @@ void UGrabber::BeginPlay()
 
 	if (!Input) {
 		UE_LOG(LogTemp, Error, TEXT("%s has no Input Component."), *GetOwner()->GetName());
+	} else {
+		Input->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+		Input->BindAction("Grab", IE_Released, this, &UGrabber::Release);
 	}
-
-	Input->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
-	Input->BindAction("Grab", IE_Released, this, &UGrabber::Release);
 }
 
 void UGrabber::Grab() {
