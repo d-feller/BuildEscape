@@ -14,8 +14,6 @@ UGrabber::UGrabber()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -24,23 +22,37 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	Input = GetOwner()->FindComponentByClass<UInputComponent>();
+	FindPhysicsHandle();
+	SetupInputComponent();
+}
 
-	if (!PhysicsHandle) {
+void UGrabber::FindPhysicsHandle()
+{
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (!PhysicsHandle) 
+	{
 		UE_LOG(LogTemp, Error, TEXT("%s has no PhysicsHandle Component."), *GetOwner()->GetName());
 	}
+}
 
-	if (!Input) {
+void UGrabber::SetupInputComponent()
+{
+	Input = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (!Input)
+	{
 		UE_LOG(LogTemp, Error, TEXT("%s has no Input Component."), *GetOwner()->GetName());
-	} else {
+	}
+	else
+	{
 		Input->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
 		Input->BindAction("Grab", IE_Released, this, &UGrabber::Release);
 	}
 }
 
-void UGrabber::Grab() {
+void UGrabber::Grab()
+{
 	UE_LOG(LogTemp, Warning, TEXT("Grabber Pressed"));
+	GetFirstPhysicsBodyInReach();
 }
 
 void UGrabber::Release()
@@ -52,6 +64,10 @@ void UGrabber::Release()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
+{
 	FVector PlayerViewLocation;
 	FRotator PlayerViewRotation;
 
@@ -62,17 +78,6 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	FVector LineTraceEnd = PlayerViewLocation + PlayerViewRotation.Vector() * Reach;
 
-	DrawDebugLine(
-		GetWorld(),
-		PlayerViewLocation,
-		LineTraceEnd,
-		FColor(0, 255, 0),
-		false,
-		0,
-		0,
-		5.f
-	);
-	
 	FHitResult Hit;
 	FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
 
@@ -84,8 +89,10 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		TraceParams
 	);
 
-	if (Hit.GetActor()) {
+	if (Hit.GetActor())
+	{
 		UE_LOG(LogTemp, Warning, TEXT("%s is in reach"), *Hit.GetActor()->GetName());
 	}
+	
+	return Hit;
 }
-
