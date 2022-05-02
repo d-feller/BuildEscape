@@ -35,4 +35,6 @@ private:
 	void SetupInputComponent();
 
 	FHitResult GetFirstPhysicsBodyInReach() const;
+	FVector GetPlayersMaxReach() const;
+	FVector GetPlayerViewLocation() const;
 };

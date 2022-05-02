@@ -51,22 +51,52 @@ void UGrabber::SetupInputComponent()
 
 void UGrabber::Grab()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grabber Pressed"));
-	GetFirstPhysicsBodyInReach();
+	FHitResult HitResult = GetFirstPhysicsBodyInReach();
+	UPrimitiveComponent* ComponenToGrab = HitResult.GetComponent();
+
+	if (HitResult.GetActor())
+	{
+		PhysicsHandle->GrabComponentAtLocation(
+			ComponenToGrab,
+			NAME_None,
+			GetPlayersMaxReach()
+		);
+	}
 }
 
 void UGrabber::Release()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grabber Released"));
+	PhysicsHandle->ReleaseComponent();
 }
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (PhysicsHandle->GrabbedComponent)
+	{
+		PhysicsHandle->SetTargetLocation(GetPlayersMaxReach());
+	}
 }
 
 FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
+{
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
+
+	GetWorld()->LineTraceSingleByObjectType(
+		OUT Hit,
+		GetPlayerViewLocation(),
+		GetPlayersMaxReach(),
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		TraceParams
+	);
+
+	return Hit;
+}
+
+FVector UGrabber::GetPlayersMaxReach() const
 {
 	FVector PlayerViewLocation;
 	FRotator PlayerViewRotation;
@@ -76,23 +106,18 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 		OUT PlayerViewRotation
 	);
 
-	FVector LineTraceEnd = PlayerViewLocation + PlayerViewRotation.Vector() * Reach;
+	return PlayerViewLocation + PlayerViewRotation.Vector() * Reach;
+}
 
-	FHitResult Hit;
-	FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
+FVector UGrabber::GetPlayerViewLocation() const
+{
+	FVector PlayerViewLocation;
+	FRotator PlayerViewRotation;
 
-	GetWorld()->LineTraceSingleByObjectType(
-		OUT Hit,
-		PlayerViewLocation,
-		LineTraceEnd,
-		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
-		TraceParams
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewLocation,
+		OUT PlayerViewRotation
 	);
 
-	if (Hit.GetActor())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s is in reach"), *Hit.GetActor()->GetName());
-	}
-	
-	return Hit;
+	return PlayerViewLocation;
 }
