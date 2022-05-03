@@ -26,10 +26,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void OpenDoor(float DeltaTime);
 	void CloseDoor(float DeltaTime);
+	float TotalMassOfActors() const;
 
 private:
 	UPROPERTY(EditAnywhere)
 	float TargetYaw = 90.f;
+
+	UPROPERTY(EditAnywhere)
+	float MassToTriggerPressurePlate = 50.f;
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* PressurePlate;
