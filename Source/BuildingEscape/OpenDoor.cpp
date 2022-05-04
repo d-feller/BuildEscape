@@ -32,7 +32,6 @@ void UOpenDoor::BeginPlay()
 	InitialRotation = GetOwner()->GetActorRotation();
 	CurrentRotation = InitialRotation;
 	TargetRotation = GetOwner()->GetActorRotation().Add(0., TargetYaw, 0.);
-	PressurePlateTrigger = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 // Called every frame
@@ -67,13 +66,17 @@ float UOpenDoor::TotalMassOfActors() const
 	float TotalMass = 0.f;
 
 	TArray<AActor*> OverlappingActors;
+
+	if (!PressurePlate) {
+		return TotalMass;
+	}
+
 	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
 
 	for (int32 i = 0; i < OverlappingActors.Num(); i++)
 	{
 		AActor* Actor = OverlappingActors[i];
 		TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
-		UE_LOG(LogTemp, Warning, TEXT("%s is on the pressure plate with current total weight: %f"), *Actor->GetName(), TotalMass)
 	}
 
 	return TotalMass;

@@ -36,10 +36,7 @@ private:
 	float MassToTriggerPressurePlate = 50.f;
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate;
-
-	UPROPERTY(EditAnywhere)
-	AActor* PressurePlateTrigger;
+	ATriggerVolume* PressurePlate = nullptr;
 
 	FRotator InitialRotation;
 	FRotator CurrentRotation;
