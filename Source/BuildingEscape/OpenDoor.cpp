@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "OpenDoor.h"
+#include "Components/AudioComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
@@ -32,6 +33,8 @@ void UOpenDoor::BeginPlay()
 	InitialRotation = GetOwner()->GetActorRotation();
 	CurrentRotation = InitialRotation;
 	TargetRotation = GetOwner()->GetActorRotation().Add(0., TargetYaw, 0.);
+
+	FindAudioComponent();
 }
 
 // Called every frame
@@ -53,12 +56,30 @@ void UOpenDoor::OpenDoor(float DeltaTime)
 {
 	CurrentRotation.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, TargetRotation.Yaw, DeltaTime, 1);
 	GetOwner()->SetActorRotation(CurrentRotation);
+
+	if (!AudioComponent) {
+		return;
+	}
+	
+	if (!OpenDoorSoundPlayed) {
+		AudioComponent->Play();
+		OpenDoorSoundPlayed = true;
+	}
 }
 
 void UOpenDoor::CloseDoor(float DeltaTime)
 {
 	CurrentRotation.Yaw = FMath::FInterpTo(CurrentRotation.Yaw, InitialRotation.Yaw, DeltaTime, 5);
 	GetOwner()->SetActorRotation(CurrentRotation);
+
+	if (!AudioComponent) {
+		return;
+	}
+	
+	if (OpenDoorSoundPlayed) {
+		AudioComponent->Play();
+		OpenDoorSoundPlayed = false;
+	}
 }
 
 float UOpenDoor::TotalMassOfActors() const
@@ -80,5 +101,15 @@ float UOpenDoor::TotalMassOfActors() const
 	}
 
 	return TotalMass;
+}
+
+void UOpenDoor::FindAudioComponent()
+{
+	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
+
+	if (!AudioComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s has no AudioComponent!"), *GetOwner()->GetName());
+	}
 }
 
